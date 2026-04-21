@@ -156,6 +156,54 @@ Summarize the data.
 * Summarize the paired differences. Do the data suggest that there is a difference between dopamine in the brains of young zebra finches when they sing further away compared to closer to their adult song?
 * **Optional Challenge** Can you reproduce Figure 2(g)? Note that the you can use \texttt{geom\_errorbar()} to plot the range created by adding the mean $\pm$ one standard deviation.
 
+**Solution:**   
+
+### Numerical summary of further values
+```{r}
+dat |> summarize(
+  n = n(),
+  mean = mean(further_vals),
+  sd = sd(further_vals),
+  median = median(further_vals),
+  IQR = IQR(further_vals),
+  skew = e1071::skewness(further_vals),
+  kurt = e1071::kurtosis(further_vals)
+)
+```
+
+The mean and median for further values are -0.212 and -0.188, respectively. This indicates that singing further away decreases dopamine from its average levels.
+
+
+### Numerical summary of closer values
+```{r}
+dat |> summarize(
+  n = n(),
+  mean = mean(closer_vals),
+  sd = sd(closer_vals),
+  median = median(closer_vals),
+  IQR = IQR(closer_vals),
+  skew = e1071::skewness(closer_vals),
+  kurt = e1071::kurtosis(closer_vals)
+)
+```
+
+The mean and median for closer values are 0.171 and 0.139, respectively. This indicates that singing closer away increases dopamine from its average levels.
+
+### Numerical summary of paired differences
+```{r}
+dat |> summarize(
+  n = n(),
+  mean = mean(difference),
+  sd = sd(difference),
+  median = median(difference),
+  IQR = IQR(difference),
+  skew = e1071::skewness(difference),
+  kurt = e1071::kurtosis(difference)
+)
+```
+
+The mean and median for the paired differences are 0.384 and 0.342, respectively. This indicates that, when birds sing closer to the adult song, their dopamine is higher than baseline.
+
 ## Part d
 Conduct the inferences they do in the paper. Make sure to report the results a little more comprehensively -- that is your parenthetical should look something like: ($t=23.99$, $p<0.0001$; $g=1.34$; 95% CI: 4.43, 4.60). Ensure to verify any conditions for use.\
 **Note**: Your numbers will vary slightly because they reported two-sided test $p$-values instead of the specified one-sided tests. 
