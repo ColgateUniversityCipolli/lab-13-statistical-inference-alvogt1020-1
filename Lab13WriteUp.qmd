@@ -131,6 +131,23 @@ We find computationally that the minimum necessary sample size to needed to dete
 ## Part b
 Click the link to go to the paper. Find the source data for Figure 2. Download the Excel file. Describe what you needed to do to collect the data for Figure 2(g). Note that you only need the `closer_vals` and `further_vals`. Ensure to `mutate()` the data to get a difference (e.g., `closer_vals - further_vals`).
 
+**Solution:**
+To collect the data for Figure 2(g), we first download the source data as a .xlsx file. We then open this file in Microsoft Excel, and delete all irrelevant sheets. This leaves us with the two sheets: `g.Farther_vals` and `g.Closer_vals`. We can then combine the data in `R` as follows:
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+dat = tibble(
+  further_vals = read_excel("lab13.fig2.data.xlsx", sheet = "g.Farther_vals")[[1]],
+  closer_vals = read_excel("lab13.fig2.data.xlsx",sheet="g.Closer_vals")[[1]]
+)
+
+dat = dat |> mutate(
+  difference = closer_vals - further_vals
+)
+```
+
 ## Part c
 Summarize the data.
 
