@@ -286,11 +286,144 @@ g.diff
 
 The close responses differed significantly from 0 (t = 9.1573, p = 1.333e-09; g = 1.77; 95% CI: 0.1452511, Inf).   
 
-The far responses differed significantly from 0 (t = -7.9245, p = 1.866e-08; g = -1.53; 95% CI: -Inf, 0.1668619).   
+The far responses differed significantly from 0 (t = -7.9245, p = 1.866e-08; g = -1.53; 95% CI: -Inf, -0.1668619).   
 
 The difference between populations was significant (t = 9.1428, p = 2.746e-09; g = 1.77; 95% CI: 0.3030683, 0.4797923).   
 
 ## Part e 
+
+**Solution:**
+The corresponding graphs are plotted below:
+
+### Close plots
+```{r}
+t.obs.close = t.close$statistic
+df.close = t.close$parameter
+
+x.close = seq(-8, 16, length.out = 1000)
+
+null.close = tibble(
+  x = x.close,
+  y = dt(x.close, df = df.close)
+)
+
+shade.close = null.close |>
+  filter(x >= t.obs.close)
+
+#resampling distribution
+set.seed(12345678)
+
+resample.close = numeric(2000)
+
+for(i in 1:2000){
+  sample.close = sample(dat$closer_vals, replace = TRUE)
+  resample.close[i] = t.test(sample.close, mu = 0, alternative = "greater")$statistic
+}
+
+resample.close.df = data.frame(t.stat = resample.close)
+
+#plot
+ggplot(null.close, aes(x = x, y = y)) +
+  geom_line() +
+  geom_ribbon(data = shade.close, 
+              aes(ymin = 0, ymax = y), 
+                  alpha = 0.3) +
+  geom_vline(xintercept = t.obs.close, linetype = "dashed") +
+  geom_density(data = resample.close.df,
+               aes(x = t.stat, y = after_stat(density)),
+               inherit.aes = FALSE) +
+  ggtitle("Close Responses: Null T Distribution and Resampling Distribution") +
+  xlab("t") +
+  ylab("Density")
+```
+
+### Far plots
+```{r}
+t.obs.far = t.far$statistic
+df.far = t.far$parameter
+
+x.far = seq(-14, 8, length.out = 1000)
+
+null.far = tibble(
+  x = x.far,
+  y = dt(x.far, df = df.far)
+)
+
+shade.far = null.far |>
+  filter(x <= t.obs.far)
+
+#resampling distribution
+set.seed(12345678)
+
+resample.far = numeric(2000)
+
+for(i in 1:2000){
+  sample.far = sample(dat$further_vals, replace = TRUE)
+  resample.far[i] = t.test(sample.far, mu = 0, alternative = "less")$statistic
+}
+
+resample.far.df = data.frame(t.stat = resample.far)
+
+#plot
+ggplot(null.far, aes(x = x, y = y)) +
+  geom_line() +
+  geom_ribbon(data = shade.far, 
+              aes(ymin = 0, ymax = y), 
+                  alpha = 0.3) +
+  geom_vline(xintercept = t.obs.far, linetype = "dashed") +
+  geom_density(data = resample.far.df,
+               aes(x = t.stat, y = after_stat(density)),
+               inherit.aes = FALSE) +
+  ggtitle("Far Responses: Null T Distribution and Resampling Distribution") +
+  xlab("t") +
+  ylab("Density")
+```
+
+
+
+### Difference plots
+```{r}
+t.obs.diff = t.diff$statistic
+df.diff = t.diff$parameter
+
+x.diff = seq(-14, 14, length.out = 1000)
+
+null.diff = tibble(
+  x = x.diff,
+  y = dt(x.diff, df = df.diff)
+)
+
+shade.diff = null.diff |>
+  filter(abs(x) >= abs(t.obs.diff))
+
+#resampling distribution
+set.seed(12345678)
+
+resample.diff = numeric(2000)
+
+for(i in 1:2000){
+  sample.diff = sample(dat$difference, replace = TRUE)
+  resample.diff[i] = t.test(sample.diff, mu = 0, alternative = "two.sided")$statistic
+}
+
+resample.diff.df = data.frame(t.stat = resample.diff)
+
+#plot
+ggplot(null.diff, aes(x = x, y = y)) +
+  geom_line() +
+  geom_ribbon(data = shade.diff, 
+              aes(ymin = 0, ymax = y), 
+              alpha = 0.3) +
+  geom_vline(xintercept = c(-abs(t.obs.diff), abs(t.obs.diff)), linetype = "dashed") +
+  geom_density(data = resample.diff.df,
+               aes(x = t.stat, y = after_stat(density)),
+               inherit.aes = FALSE) +
+  ggtitle("Paired Differences: Null T Distribution and Resampling Distribution") +
+  xlab("t") +
+  ylab("Density")
+```
+
+
 
 For each hypothesis test in the previous question, plot the null $T$ 
 distribution and the observed $t$ statistic. Ensure to use \texttt{geom\_ribbon()} 
